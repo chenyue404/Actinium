@@ -4,7 +4,6 @@ import android.app.Application
 import android.content.Context
 import com.orhanobut.logger.LogLevel
 import com.orhanobut.logger.Logger
-import com.squareup.leakcanary.LeakCanary
 import com.v2ray.actinium.extension.VPN_NETWORK_STATISTICS
 import com.v2ray.actinium.ui.SettingsActivity
 import com.v2ray.actinium.util.ConfigManager
@@ -23,8 +22,6 @@ class ActiniumApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
-
-        LeakCanary.install(this)
 
         val lastVersion = defaultSharedPreferences.getInt(PREF_LAST_VERSION, 0)
         val pureVersion = if (lastVersion > 4000000) lastVersion - 4000000

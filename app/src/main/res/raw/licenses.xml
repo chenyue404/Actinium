@@ -46,12 +46,12 @@
         <copyright>Copyright 2015 Orhan Obut</copyright>
         <license>Apache Software License 2.0</license>
     </notice>
-    <notice>
-        <name>LeakCanary</name>
-        <url>https://github.com/square/leakcanary</url>
-        <copyright>Copyright 2015 Square, Inc.</copyright>
-        <license>Apache Software License 2.0</license>
-    </notice>
+    <!--<notice>-->
+        <!--<name>LeakCanary</name>-->
+        <!--<url>https://github.com/square/leakcanary</url>-->
+        <!--<copyright>Copyright 2015 Square, Inc.</copyright>-->
+        <!--<license>Apache Software License 2.0</license>-->
+    <!--</notice>-->
     <notice>
         <name>ReactiveNetwork</name>
         <url>https://github.com/pwittchen/ReactiveNetwork</url>
