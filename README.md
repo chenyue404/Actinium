@@ -1,3 +1,10 @@
+更新以自用  
+配置文件要用新格式，参考[https://github.com/xiaokangwang/AndroidLibV2ray/tree/master/conf](https://github.com/xiaokangwang/AndroidLibV2ray/tree/master/conf)
+  
+  
+    
+      
+      
 [![GitHub version](https://badge.fury.io/gh/V2Ray-Android%2FActinium.svg)](https://github.com/V2Ray-Android/Actinium/releases/latest) ![platform](http://img.shields.io/badge/platform-Android-blue.svg)
 # Actinium
 
