@@ -49,4 +49,5 @@
     <string name="summary_pref_foreground_service">使用前台服务以防被系统杀死，这将显示一个通知</string>
 
     <string name="title_pref_core_version">V2Ray 核心版本</string>
+    <string name="notification_name">V2Ray 后台服务</string>
 </resources>
