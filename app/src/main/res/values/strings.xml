@@ -28,7 +28,7 @@
     <!-- PerAppProxyActivity -->
     <string name="msg_dialog_progress">Loading</string>
     <string name="menu_item_select_all">Select all</string>
-    
+
 
     <!-- Preferences -->
     <string name="title_settings">Settings</string>
@@ -51,5 +51,4 @@
     <string name="summary_pref_foreground_service">Use foreground service to prevent it from being killed by system, this will display a notification</string>
 
     <string name="title_pref_core_version">V2Ray core version</string>
-    <string name="notification_name">V2Ray Background Service</string>
 </resources>
