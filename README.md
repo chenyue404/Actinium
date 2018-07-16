@@ -28,7 +28,7 @@
 1. `git clone https://github.com/V2Ray-Android/Actinium.git`
 2. Open in Android Studio or Intellij IDEA.
 
-Module "libv2ray" is build from [AndroidLibV2ray](https://github.com/V2Ray-Android/AndroidLibV2ray)
+Module "libv2ray" is build from [AndroidLibV2ray](https://github.com/xiaokangwang/AndroidLibV2ray)
 
 ## Donate
 
