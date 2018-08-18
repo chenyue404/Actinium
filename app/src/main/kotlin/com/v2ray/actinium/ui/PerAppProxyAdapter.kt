@@ -13,6 +13,13 @@ import java.util.*
 
 class PerAppProxyAdapter(val apps: List<AppInfo>, blacklist: MutableSet<String>?) :
         RecyclerView.Adapter<PerAppProxyAdapter.BaseViewHolder>() {
+    override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        if (holder is AppViewHolder) {
+            val appInfo = apps[position - 1]
+            holder.bind(appInfo)
+        }
+    }
 
     companion object {
         private const val VIEW_TYPE_HEADER = 0
@@ -20,17 +27,9 @@ class PerAppProxyAdapter(val apps: List<AppInfo>, blacklist: MutableSet<String>?
     }
 
     val blacklist = if (blacklist == null) HashSet<String>() else HashSet<String>(blacklist)
-
-    override fun onBindViewHolder(holder: BaseViewHolder?, position: Int) {
-        if (holder is AppViewHolder) {
-            val appInfo = apps[position - 1]
-            holder.bind(appInfo)
-        }
-    }
-
     override fun getItemCount() = apps.size + 1
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder? {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder {
         val ctx = parent.context
 
         return when (viewType) {
@@ -44,12 +43,16 @@ class PerAppProxyAdapter(val apps: List<AppInfo>, blacklist: MutableSet<String>?
             VIEW_TYPE_ITEM -> AppViewHolder(ctx.layoutInflater
                     .inflate(R.layout.item_recycler_bypass_list, parent, false))
 
-            else -> null
+            else -> {
+                val view = View(ctx)
+                view.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                        ctx.resources.getDimensionPixelSize(R.dimen.bypass_list_header_height) * 2)
+                BaseViewHolder(view)
+            }
         }
     }
 
-    override fun getItemViewType(position: Int)
-            = if (position == 0) VIEW_TYPE_HEADER else VIEW_TYPE_ITEM
+    override fun getItemViewType(position: Int) = if (position == 0) VIEW_TYPE_HEADER else VIEW_TYPE_ITEM
 
     open class BaseViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 

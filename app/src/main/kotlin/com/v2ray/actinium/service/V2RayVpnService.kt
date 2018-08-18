@@ -71,7 +71,7 @@ class V2RayVpnService : VpnService() {
                 lastNetworkInfo?.let { last ->
                     if (defaultDPreference.getPrefBoolean(SettingsActivity.PREF_FOREGROUND_SERVICE, false)) {
                         val speed = it - last
-                        showNotification("${speed.rxByte.toSpeedString()} ↓ ${speed.txByte.toSpeedString()} ↑")
+                        notifyContent("${speed.rxByte.toSpeedString()} ↓ ${speed.txByte.toSpeedString()} ↑")
                     }
                 }
                 lastNetworkInfo = it
@@ -307,6 +307,32 @@ class V2RayVpnService : VpnService() {
                 .build()
 
         startForeground(NOTIFICATION_ID, notification)
+    }
+
+    private fun notifyContent(text: String = "0 Bytes/s ↓ 0 Bytes/s ↑") {
+        val startMainIntent = Intent(applicationContext, MainActivity::class.java)
+        val contentPendingIntent = PendingIntent.getActivity(applicationContext,
+                NOTIFICATION_PENDING_INTENT_CONTENT, startMainIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT)
+
+        val stopV2RayIntent = Intent(ACTION_STOP_V2RAY)
+        val stopV2RayPendingIntent = PendingIntent.getBroadcast(applicationContext,
+                NOTIFICATION_PENDING_INTENT_STOP_V2RAY, stopV2RayIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT)
+
+        configuration(fromSdk = Build.VERSION_CODES.O) { createNotificationChannel() }
+
+        val notification = NotificationCompat.Builder(applicationContext, NOTIFICATION_CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_action_logo)
+                .setContentTitle(currConfigName)
+                .setContentText(text)
+                .setPriority(NotificationCompat.PRIORITY_MIN)
+                .setContentIntent(contentPendingIntent)
+                .addAction(R.drawable.ic_close_grey_800_24dp,
+                        getString(R.string.notification_action_stop_v2ray),
+                        stopV2RayPendingIntent)
+                .build()
+        notificationManager.notify(NOTIFICATION_ID, notification);
     }
 
     private fun cancelNotification() {
