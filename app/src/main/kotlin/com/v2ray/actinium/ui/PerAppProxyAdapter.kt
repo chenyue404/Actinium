@@ -14,7 +14,7 @@ import java.util.*
 class PerAppProxyAdapter(val apps: List<AppInfo>, blacklist: MutableSet<String>?) :
         RecyclerView.Adapter<PerAppProxyAdapter.BaseViewHolder>() {
     override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+//        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
         if (holder is AppViewHolder) {
             val appInfo = apps[position - 1]
             holder.bind(appInfo)
