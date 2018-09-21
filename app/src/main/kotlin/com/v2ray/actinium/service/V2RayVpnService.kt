@@ -16,9 +16,6 @@ import android.net.VpnService
 import android.os.*
 import android.support.v4.app.NotificationCompat
 import android.util.Log
-import com.github.pwittchen.reactivenetwork.library.Connectivity
-import com.github.pwittchen.reactivenetwork.library.ReactiveNetwork
-import com.orhanobut.logger.Logger
 import com.v2ray.actinium.R
 import com.v2ray.actinium.aidl.IV2RayServiceCallback
 import com.v2ray.actinium.defaultDPreference
@@ -34,13 +31,9 @@ import com.v2ray.actinium.ui.SettingsActivity
 import com.v2ray.actinium.util.ConfigUtil
 import com.v2ray.actinium.util.currConfigFile
 import com.v2ray.actinium.util.currConfigName
-import libv2ray.Libv2ray
-import libv2ray.V2RayCallbacks
-import libv2ray.V2RayVPNServiceSupportsSet
 import org.jetbrains.anko.configuration
 import org.jetbrains.anko.notificationManager
 import rx.Subscription
-import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
 import java.io.File
 import java.io.FileInputStream
@@ -56,7 +49,11 @@ class V2RayVpnService : VpnService() {
 
         fun startV2Ray(context: Context) {
             val intent = Intent(context.applicationContext, V2RayVpnService::class.java)
-            context.startService(intent)
+            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.N_MR1) {
+                context.startForegroundService(intent)
+            } else {
+                context.startService(intent)
+            }
         }
     }
 
