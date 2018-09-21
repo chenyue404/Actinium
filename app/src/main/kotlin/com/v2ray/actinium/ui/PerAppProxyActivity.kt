@@ -3,13 +3,17 @@ package com.v2ray.actinium.ui
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.app.ProgressDialog
+import android.content.Context
 import android.os.Bundle
 import android.support.v7.widget.RecyclerView
+import android.text.TextUtils
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.DecelerateInterpolator
+import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import com.dinuscxj.itemdecoration.LinearDividerItemDecoration
 import com.v2ray.actinium.R
 import com.v2ray.actinium.defaultDPreference
@@ -28,6 +32,7 @@ class PerAppProxyActivity : BaseActivity() {
     }
 
     private var adapter: PerAppProxyAdapter? = null
+    private var appsAll: List<AppInfo>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,11 +44,6 @@ class PerAppProxyActivity : BaseActivity() {
                 this, LinearDividerItemDecoration.LINEAR_DIVIDER_VERTICAL)
         recycler_view.addItemDecoration(dividerItemDecoration)
 
-        val dialog = ProgressDialog(this)
-        dialog.isIndeterminate = true
-        dialog.setCancelable(false)
-        dialog.setMessage(getString(R.string.msg_dialog_progress))
-        dialog.show()
         AppManagerUtil.rxLoadNetworkAppList(this)
                 .subscribeOn(Schedulers.io())
                 .map {
@@ -56,15 +56,16 @@ class PerAppProxyActivity : BaseActivity() {
                 }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
+                    appsAll = it
                     val blacklist = defaultDPreference.getPrefStringSet(PREF_PER_APP_PROXY_SET, null)
-                    adapter = PerAppProxyAdapter(it, blacklist)
+                    adapter = PerAppProxyAdapter(this, it, blacklist)
                     recycler_view.adapter = adapter
-                    dialog.dismiss()
+                    pb_waiting.visibility = View.GONE
                 }
 
         recycler_view.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             var dst = 0
-            val threshold = resources.getDimensionPixelSize(R.dimen.bypass_list_header_height) * 2
+            val threshold = resources.getDimensionPixelSize(R.dimen.bypass_list_header_height) * 3
             override fun onScrolled(recyclerView: RecyclerView?, dx: Int, dy: Int) {
                 dst += dy
                 if (dst > threshold) {
@@ -115,20 +116,35 @@ class PerAppProxyActivity : BaseActivity() {
 
         switch_bypass_apps.setOnCheckedChangeListener { buttonView, isChecked ->
             defaultDPreference.setPrefBoolean(PREF_BYPASS_APPS, isChecked)
-            tv_bypass_apps.setText(if (isChecked) R.string.switch_bypass_apps_on else
-                R.string.switch_bypass_apps_off)
         }
 
         switch_bypass_apps.isChecked = defaultDPreference.getPrefBoolean(PREF_BYPASS_APPS, false)
-        tv_bypass_apps.setText(if (switch_bypass_apps.isChecked) R.string.switch_bypass_apps_on else
-            R.string.switch_bypass_apps_off)
+        et_search.setOnEditorActionListener { v, actionId, event ->
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                //hide
+                var imm: InputMethodManager = v.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS)
 
-        container_per_app_proxy.setOnClickListener {
-            switch_bypass_apps.performClick()
-        }
-
-        container_bypass_apps.setOnClickListener {
-            switch_bypass_apps.performClick()
+                val key = v.text.toString().toUpperCase()
+                val apps = ArrayList<AppInfo>()
+                if (TextUtils.isEmpty(key)) {
+                    appsAll?.forEach {
+                        apps.add(it)
+                    }
+                } else {
+                    appsAll?.forEach {
+                        if (it.appName.toUpperCase().indexOf(key) >= 0) {
+                            apps.add(it)
+                        }
+                    }
+                }
+                adapter = PerAppProxyAdapter(this, apps, adapter?.blacklist)
+                recycler_view.adapter = adapter
+                adapter?.notifyDataSetChanged()
+                true
+            } else {
+                false
+            }
         }
     }
 
@@ -147,11 +163,18 @@ class PerAppProxyActivity : BaseActivity() {
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
         R.id.select_all -> adapter?.let {
             val pkgNames = it.apps.map { it.packageName }
-            if (it.blacklist.containsAll(pkgNames))
-                it.blacklist.clear()
-            else
-                it.blacklist.addAll(pkgNames)
+            if (it.blacklist.containsAll(pkgNames)) {
+                it.apps.forEach {
+                    val packageName = it.packageName
+                    adapter?.blacklist!!.remove(packageName)
+                }
+            } else {
+                it.apps.forEach {
+                    val packageName = it.packageName
+                    adapter?.blacklist!!.add(packageName)
+                }
 
+            }
             it.notifyDataSetChanged()
             true
         } ?: false

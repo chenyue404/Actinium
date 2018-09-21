@@ -1,5 +1,6 @@
 package com.v2ray.actinium.ui
 
+import android.graphics.Color
 import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.view.ViewGroup
@@ -11,7 +12,7 @@ import org.jetbrains.anko.layoutInflater
 import org.jetbrains.anko.textColor
 import java.util.*
 
-class PerAppProxyAdapter(val apps: List<AppInfo>, blacklist: MutableSet<String>?) :
+class PerAppProxyAdapter(val activity: BaseActivity, val apps: List<AppInfo>, blacklist: MutableSet<String>?) :
         RecyclerView.Adapter<PerAppProxyAdapter.BaseViewHolder>() {
     override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
 //        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
@@ -20,6 +21,8 @@ class PerAppProxyAdapter(val apps: List<AppInfo>, blacklist: MutableSet<String>?
             holder.bind(appInfo)
         }
     }
+
+    private var mActivity: BaseActivity = activity
 
     companion object {
         private const val VIEW_TYPE_HEADER = 0
@@ -36,19 +39,15 @@ class PerAppProxyAdapter(val apps: List<AppInfo>, blacklist: MutableSet<String>?
             VIEW_TYPE_HEADER -> {
                 val view = View(ctx)
                 view.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                        ctx.resources.getDimensionPixelSize(R.dimen.bypass_list_header_height) * 2)
+                        ctx.resources.getDimensionPixelSize(R.dimen.bypass_list_header_height) * 3)
                 BaseViewHolder(view)
             }
+//            VIEW_TYPE_ITEM -> AppViewHolder(ctx.layoutInflater
+//                    .inflate(R.layout.item_recycler_bypass_list, parent, false))
 
-            VIEW_TYPE_ITEM -> AppViewHolder(ctx.layoutInflater
+            else -> AppViewHolder(ctx.layoutInflater
                     .inflate(R.layout.item_recycler_bypass_list, parent, false))
 
-            else -> {
-                val view = View(ctx)
-                view.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                        ctx.resources.getDimensionPixelSize(R.dimen.bypass_list_header_height) * 2)
-                BaseViewHolder(view)
-            }
         }
     }
 
@@ -69,12 +68,20 @@ class PerAppProxyAdapter(val apps: List<AppInfo>, blacklist: MutableSet<String>?
             this.appInfo = appInfo
 
             icon.image = appInfo.appIcon
-            name.text = appInfo.appName
+//            name.text = appInfo.appName
 
             checkBox.isChecked = inBlacklist
 
-            name.textColor = itemView.context.resources.getColor(if (appInfo.isSystemApp)
-                R.color.color_highlight_material else R.color.abc_secondary_text_material_light)
+//            name.textColor = mActivity.resources.getColor(if (appInfo.isSystemApp)
+//                R.color.color_highlight_material else R.color.abc_secondary_text_material_light)
+
+            if (appInfo.isSystemApp) {
+                name.text = String.format("** %1s", appInfo.appName)
+                name.textColor = Color.RED
+            } else {
+                name.text = appInfo.appName
+                name.textColor = Color.DKGRAY
+            }
 
             itemView.setOnClickListener(this)
         }
