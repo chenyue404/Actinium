@@ -38,6 +38,13 @@ import rx.schedulers.Schedulers
 import java.io.File
 import java.io.FileInputStream
 import java.util.concurrent.TimeUnit
+import libv2ray.Libv2ray
+import libv2ray.V2RayCallbacks
+import libv2ray.V2RayVPNServiceSupportsSet
+import rx.android.schedulers.AndroidSchedulers
+import com.github.pwittchen.reactivenetwork.library.Connectivity
+import com.github.pwittchen.reactivenetwork.library.ReactiveNetwork
+import com.orhanobut.logger.Logger
 
 class V2RayVpnService : VpnService() {
     companion object {
