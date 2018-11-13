@@ -12,7 +12,7 @@ android {
         minSdkVersion 15
         targetSdkVersion Integer.parseInt("$targetSdkVer")
         versionCode 32
-        versionName "0.10.24-weekly-30-lib3.42"
+        versionName "0.10.24-weekly-33-lib3.51"
     }
 
     signingConfigs {
